@@ -92,32 +92,53 @@ def shortest_path(source, target):
     If no possible path, returns None.
     """
 
+    # Initialize frontier to just the starting position
+    start = Node(state=source, parent=None, action=None)
     frontier = QueueFrontier()
-    explored = []
+    frontier.add(start)
 
-    firstNode = Node(source, None, None)
-    frontier.add(firstNode)
 
+    # Initialize an empty explored set
+    explored = set()
+
+    # Keep looping until solution found
     while True:
+        # If nothing left in frontier, then no path
         if frontier.empty():
-            return None
-        else: 
-            currNode = frontier.remove()
-            explored.append(currNode.state)
+            raise Exception("no solution")
 
-        for (movie_id, person_id) in neighbors_for_person(currNode.state):
-            if not frontier.contains_state(person_id) or person_id in explored:
-                nextNode = Node(person_id, currNode, movie_id)
+        # Choose a node from the frontier
+        node = frontier.remove()
+    
+        # Mark node as explored
+        explored.add(node.state)
 
-                if nextNode.state == target:
+        # Add neighbors to frontier
+        for movie_id, person_id in neighbors_for_person(node.state):
+            if not frontier.contains_state(person_id) and person_id not in explored:
+                child = Node(state=person_id, parent=node, action=movie_id)
+
+                # If node is the goal, then we have a solution
+                if child.state == target:
+                    movies = []
+                    people = []
                     solution = []
-                    while nextNode.parent:
-                        solution.append([nextNode.action, nextNode.state])
-                        nextNode = nextNode.parent
-                    solution.reverse()
+
+                    while child.parent is not None:
+                        movies.append(child.action)
+                        people.append(child.state)
+                        child = child.parent
+                         
+                    movies.reverse()
+                    people.reverse()
+
+                    for i in range(len(movies)):
+                        solution.append((movies[i], people[i])
+
                     return solution
-                else: 
-                    frontier.add(nextNode)
+
+                frontier.add(child)
+
 
 def person_id_for_name(name):
     """
