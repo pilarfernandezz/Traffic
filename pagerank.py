@@ -57,8 +57,24 @@ def transition_model(corpus, page, damping_factor):
     linked to by `page`. With probability `1 - damping_factor`, choose
     a link at random chosen from all pages in the corpus.
     """
-    raise NotImplementedError
+    dist = {}
+    for c in corpus.keys():
+        dist[c] = 0
 
+    if len(corpus[page]) == 0:
+        for d in dist.keys():
+            dist[d] = 1 / len(corpus.keys())
+    else: 
+        linkedPagesProb = damping_factor / len(corpus[page]) # choose a link at random linked to by `page`
+        allPagesProb = (1 - damping_factor) / len(corpus.keys()) # choose a link at random chosen from all pages in the corpus.
+        
+        for c in corpus.keys():
+            if c in corpus[page]:
+                dist[c] = linkedPagesProb + allPagesProb
+            else: 
+                dist[c] = allPagesProb
+
+    return dist
 
 def sample_pagerank(corpus, damping_factor, n):
     """
@@ -69,8 +85,33 @@ def sample_pagerank(corpus, damping_factor, n):
     their estimated PageRank value (a value between 0 and 1). All
     PageRank values should sum to 1.
     """
-    raise NotImplementedError
+    ranks = {}
+    pages = []
+    for c in corpus.keys():
+        pages.append(c)
+        ranks[c] = 0
 
+    # Starting with a page at random
+    rand = random.randrange(len(pages))
+    page = pages[rand]
+    ranks[page] += 1
+
+    i = 0
+    while (i < n - 1):
+        model = transition_model(corpus, page, damping_factor)
+        p = []
+        for m in model.keys():
+            p.append(model[m])
+
+        rand = random.choices(pages, weights=p,k=1)[0]
+        page = rand
+        ranks[rand] += 1
+        i += 1
+
+    for r in ranks:
+        ranks[r] /= n
+
+    return ranks
 
 def iterate_pagerank(corpus, damping_factor):
     """
@@ -81,8 +122,30 @@ def iterate_pagerank(corpus, damping_factor):
     their estimated PageRank value (a value between 0 and 1). All
     PageRank values should sum to 1.
     """
-    raise NotImplementedError
+    ranks = {}
+    ranksUpdated = {}
+    N = len(corpus)
+    for c in corpus.keys():
+        ranks[c] = 1 / N
+    
+    while True:
+        for mainPage in corpus:
+            summatory = 0
+            for page in corpus:
+                if len(corpus[page]) == 0:
+                    summatory += ranks[page] / N
+                elif mainPage in corpus[page]:
+                    summatory += ranks[page] / len(corpus[page])
 
+            result = summatory * damping_factor + (1 - damping_factor) / N
+            ranksUpdated[mainPage] = result
 
-if __name__ == "__main__":
+        change = 999
+        for page in corpus: 
+            if abs(ranks[page] - ranksUpdated[page]) < .001:
+                return ranks
+
+        ranks = ranksUpdated
+
+if __name__ == "__main__": 
     main()
