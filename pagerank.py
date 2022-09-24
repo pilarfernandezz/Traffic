@@ -102,7 +102,7 @@ def sample_pagerank(corpus, damping_factor, n):
         p = []
         for m in model.keys():
             p.append(model[m])
-
+            
         rand = random.choices(pages, weights=p,k=1)[0]
         page = rand
         ranks[rand] += 1
@@ -123,12 +123,12 @@ def iterate_pagerank(corpus, damping_factor):
     PageRank values should sum to 1.
     """
     ranks = {}
-    ranksUpdated = {}
     N = len(corpus)
     for c in corpus.keys():
         ranks[c] = 1 / N
     
     while True:
+        ranksUpdated = {}
         for mainPage in corpus:
             summatory = 0
             for page in corpus:
@@ -140,12 +140,14 @@ def iterate_pagerank(corpus, damping_factor):
             result = summatory * damping_factor + (1 - damping_factor) / N
             ranksUpdated[mainPage] = result
 
-        change = 999
+        hasBiggest = False
         for page in corpus: 
-            if abs(ranks[page] - ranksUpdated[page]) < .001:
-                return ranks
+            if abs(ranks[page] - ranksUpdated[page]) > .001:
+                hasBiggest = True
+                ranks = ranksUpdated
 
-        ranks = ranksUpdated
+        if hasBiggest == False:
+            return ranks
 
 if __name__ == "__main__": 
     main()
