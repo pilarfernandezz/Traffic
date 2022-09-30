@@ -59,15 +59,44 @@ def load_data(filename):
     labels should be the corresponding list of labels, where each label
     is 1 if Revenue is true, and 0 otherwise.
     """
-    raise NotImplementedError
+    evidences = []
+    labels = []
+    with open(f"{filename}", encoding="utf-8") as f:
+        reader = csv.DictReader(f)
+        for row in reader:
+            evidence = []
+            evidence.append(int(row['Administrative']))
+            evidence.append(float(row['Administrative_Duration']))
+            evidence.append(int(row['Informational']))
+            evidence.append(float(row['Informational_Duration']))
+            evidence.append(int(row['ProductRelated']))
+            evidence.append(float(row['ProductRelated_Duration']))
+            evidence.append(float(row['BounceRates']))
+            evidence.append(float(row['ExitRates']))
+            evidence.append(float(row['PageValues']))
+            evidence.append(float(row['SpecialDay']))
+            evidence.append(month(row['Month']))
+            evidence.append(int(row['OperatingSystems']))
+            evidence.append(int(row['Browser']))
+            evidence.append(int(row['Region']))
+            evidence.append(int(row['TrafficType']))
+            evidence.append(1 if row['VisitorType'] == 'Returning_Visitor' else 0)
+            evidence.append(1 if row['Weekend'] == 'TRUE' else 0)
+            evidences.append(evidence)
+            labels.append(1 if row['Revenue'] == 'TRUE' else 0)
+        return (evidences, labels)
 
+def month(month):
+    months = ["Jan", "Feb", "Mar", "Apr", "May", "June", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+    return months.index(month)
 
 def train_model(evidence, labels):
     """
     Given a list of evidence lists and a list of labels, return a
     fitted k-nearest neighbor model (k=1) trained on the data.
     """
-    raise NotImplementedError
+    model = KNeighborsClassifier()
+    return model.fit(evidence, labels)
 
 
 def evaluate(labels, predictions):
@@ -85,8 +114,21 @@ def evaluate(labels, predictions):
     representing the "true negative rate": the proportion of
     actual negative labels that were accurately identified.
     """
-    raise NotImplementedError
+    sensitivity, specificity, pos, neg = 0,0,0,0
+    for label in labels:
+        if label == 1:
+            pos += 1
+        else:
+            neg += 1
+    for i in range(len(predictions)):
+        if labels[i] == 1 and predictions[i] == labels[i]:
+            sensitivity += 1
+        elif labels[i] == 0 and predictions[i] == labels[i]:
+            specificity += 1
 
+    if pos != 0: sensitivity /= pos
+    if neg != 0: specificity /= neg
+    return (sensitivity, specificity)
 
 if __name__ == "__main__":
     main()
