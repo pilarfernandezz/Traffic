@@ -1,5 +1,7 @@
 In my experimentation process I did the following tests:
+
 By reducing the pool size from (3,3) to the (2,2) on the max poll layer, I've noticed that there was a slight increse in the duration of execution and decrease in the final accuracy.
+
 By reducing the pool size from (3,3) to the (2,2) on the convolution layer, I've noticed that there was a considerable decrease in the final accuracy.
 By adding new layers of max polling and convolution layer, I've noticed that was also decrease in the final accuracy.
 I've noticed that adding hidden layers was increasing the final accuracy until reached 3 layers, after that number, the accuracy did not changed as much.
