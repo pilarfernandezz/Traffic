@@ -78,7 +78,7 @@ def get_model():
 
     model = tf.keras.models.Sequential([
         tf.keras.layers.Conv2D(
-            32, (2, 2), activation="relu", input_shape=(IMG_WIDTH, IMG_HEIGHT, 3)
+            32, (3,3), activation="relu", input_shape=(IMG_WIDTH, IMG_HEIGHT, 3)
         ),
 
         tf.keras.layers.MaxPooling2D(pool_size=(3,3)),
