@@ -1,8 +1,8 @@
 https://cs50.harvard.edu/ai/2020/projects/5/traffic/
 
 
+Experimentation Process: 
 
-#Experiementation Process
 By reducing the pool size from (3,3) to the (2,2) on the max poll layer, I've noticed that there was a slight increse in the duration of execution and decrease in the final accuracy.
 
 By reducing the pool size from (3,3) to the (2,2) on the convolution layer, I've noticed that there was a considerable decrease in the final accuracy.
